@@ -1,0 +1,13 @@
+<script>
+(function($){$(function(){
+	$('.mod_article').activeViewport({
+		offsetTop: 300,
+		showActiveAbove: true,
+		minWidth: 640,
+		activeClass: 'activeArticle',
+		start: function(){},
+		enterState: function(){},
+		leaveState: function(){}
+	});
+});)(jQuery);
+</script>

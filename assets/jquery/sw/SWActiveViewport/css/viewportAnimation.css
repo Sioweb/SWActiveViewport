@@ -1,0 +1,16 @@
+
+/**
+* Use the two items in .ce_colsetStart .c50l && c50r
+*/
+.cssanimations .viewport_min_width .ce_colsetStart > * {
+	transform: translate3d(-100%,0,0);
+	-webkit-transform: translate3d(-100%,0,0);
+}
+.cssanimations .viewport_min_width .ce_colsetStart > *:nth-child(even) {
+	transform: translate3d(100%,0,0);
+	-webkit-transform: translate3d(100%,0,0);
+}
+.cssanimations .viewport_min_width .ce_colsetStart.activeColset > * {
+	transform: translate3d(0,0,0);
+	-webkit-transform: translate3d(0,0,0);
+}
