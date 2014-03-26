@@ -4,8 +4,6 @@
 	* @file jquery.activeViewport.js
 	* @author Sascha Weidner
 	* @class activeViewport
-	* @copyright Sascha Weidner, Sioweb
-	* http://www.sioweb.de - support|at|sioweb.de
 	*
 	* Prüft ob ein Element im Viewport scrollt und vergibt Klassen. Die Animationen und Effekte können dann in der CSS-Datei
 	* registriert werden oder als Javascript in den Callback-Funktionen enterState und leaveState.
@@ -31,15 +29,36 @@
 			this.elem = elem;
 			this.item = $(this.elem);
 			
+			if(!this.is_mobile())
+				$('body').addClass('desktop');
+			
 			/* Nach laden des Plugins einmal ausführen ohne Event. */
-			this.scroll('');
-			$(window).scroll(this.scroll);
-			$(window).resize(this.scroll);
+			if(this.mobile || !this.is_mobile())
+			{
+				if(this.mobile)
+					this.item.addClass('mobile_viewport_animation');
+				if(this.loadImgFirst)
+					$("<img/>").attr("src", $('img').eq(0).attr("src")+'?'+Math.random())
+						   .bind('load',selfObj['startPlugin']);
+				else
+					this.startPlugin()
+			}
+			else
+			{
+				this.item.addClass('no_mobile_viewport_animation');
+			}
 		};
 		
+		this.startPlugin = function()
+		{
+			selfObj.scroll('');
+			$(window).scroll(selfObj.scroll);
+			$(window).resize(selfObj.scroll);
+		};
+
 		this.scroll = function()
 		{
-			var padding = parseInt(selfObj.item.css('padding-bottom'))+parseInt(selfObj.item.css('padding-top'));
+			var padding = parseInt(selfObj.item.css('padding-bottom'),10)+parseInt(selfObj.item.css('padding-top'),10);
 			
 			/* Gibt es eine Mindestbreite? */
 			if($(window).width() >= selfObj.minWidth)
@@ -49,18 +68,29 @@
 
 			if($(window).scrollTop() < 0)
 				return false;
-			
 
 			/*
 			* Das Element anzeigen wenn es IM Viewport angekommen ist und über OffsetTop scrollt.
 			* Das letzte Element muss auch angezeigt werden wenn die ScrollHöhe nicht erreicht werden kann.
+			*
+			* ODER wenn das Element schon beim 'Eintreten sichtbar sein soll'
 			*/
+			
 			if(
+				!selfObj.showAlreadyByEnter && (
 				(
+					selfObj.item.offset().top - $(window).scrollTop() >= 0 &&
 					selfObj.item.offset().top - $(window).scrollTop() <= selfObj.offsetTop + padding &&
 					selfObj.item.offset().top + selfObj.item.height() > $(window).scrollTop() + selfObj.offsetTop
-				) 
-				|| $(window).scrollTop() >= ($(document).height() - $(window).height() - selfObj.offsetTop)
+				) || (
+					selfObj.item.offset().top < $(window).scrollTop() &&
+					$(window).scrollTop() >= ($(document).height() - $(window).height() - selfObj.offsetTop)
+				)) || (
+					selfObj.showAlreadyByEnter && (
+						(selfObj.item.offset().top - $(window).scrollTop() + selfObj.offsetTop + padding) <= $(window).height() ||
+						($(window).scrollTop() <= (selfObj.item.offset().top + selfObj.offsetTop + padding) && selfObj.item.offset().top <= $(window).height())
+					)
+				)
 			){
 				/* Nur einmal Ausführen, da das Event sonst millionenfach ausgeführt wird. */
 				if(!selfObj.activeState)
@@ -87,6 +117,14 @@
 			}
 			if(selfObj.activeState)
 				selfObj.started = true;
+		};
+
+		this.is_mobile = function()
+		{
+			var mobile = arguments[0] || true;
+			if(navigator.userAgent.match(/(iPhone|iPod|iPad|android|opera mini|palm os|palm|hiptop|avantgo|plucker|xiino|blazer|elaine|iris|3g_t|windows ce|opera mobi|windows ce; smartphone;|windows ce; iemobile)/i))
+				return mobile;
+			return !mobile;
 		};
 	
 		/**
@@ -129,7 +167,10 @@
 			/** Standard-Einstellungen als Fallback-Einstellungen. */
 			AV = $.extend({
 				test: settings.test||false,
-				offsetTop: 200,
+				loadImgFirst: settings.loadImgFirst||true,
+				offsetTop: settings.offsetTop||200,
+				showAlreadyByEnter: settings.showAlreadyByEnter||false,
+				mobile: settings.mobile||false,
 				showActiveAbove: settings.showActiveAbove||true,
 				minWidth: settings.minWidth||640,
 				activeClass: settings.activeClass||'active',
