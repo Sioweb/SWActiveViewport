@@ -16,6 +16,8 @@ Dieses Plugin prüft ob die angegebenen Elemente im Viewport liegen:
 });})(jQuery);
 ```
 
+##Options
+
 - bool `loadImgFirst` (Standard: `True`; Lädt zuerst Bilder; Wichtig für Chrome)
 - int `offsetTop` (Standard: `200`; Damit Fixed-Header kein Problem darstellen)
 - bool `showAlreadyByEnter` (Standard: `false`; Elemente werden schon beim betreten des Viewports aktiv)
