@@ -168,7 +168,7 @@
 			AV = $.extend({
 				test: settings.test||false,
 				loadImgFirst: settings.loadImgFirst||true,
-				offsetTop: settings.offsetTop||200,
+				offsetTop: settings.offsetTop||0,
 				showAlreadyByEnter: settings.showAlreadyByEnter||false,
 				mobile: settings.mobile||false,
 				showActiveAbove: settings.showActiveAbove||true,
